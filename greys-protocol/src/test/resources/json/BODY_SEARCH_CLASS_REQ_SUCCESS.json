@@ -1,0 +1,16 @@
+{
+  "class-matching": {
+    "modifier": 0,
+    "type": 100,
+    "pattern-matching": {
+      "pattern": ".*",
+      "type": 1
+    }
+  },
+  "is-include-sub-classes": true,
+  "is-include-fields":true,
+  "is-include-class-loaders":true,
+  "is-include-interfaces":true,
+  "is-include-super-classes":true,
+  "is-include-annotations":true
+}

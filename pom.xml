@@ -13,6 +13,10 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <greys-common.version>1.0.0-SNAPSHOT</greys-common.version>
+        <greys-server.version>1.0.0-SNAPSHOT</greys-server.version>
+        <greys-core.version>1.0.0-SNAPSHOT</greys-core.version>
+        <greys-protocol.version>1.0.0-SNAPSHOT</greys-protocol.version>
     </properties>
 
 
@@ -55,8 +59,52 @@
     <!--</profile>-->
     <!--</profiles>-->
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <encoding>UTF-8</encoding>
+                    <showDeprecation>true</showDeprecation>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
     <dependencyManagement>
         <dependencies>
+
+            <dependency>
+                <groupId>com.github.ompc.greys</groupId>
+                <artifactId>greys-common</artifactId>
+                <version>${greys-common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.ompc.greys</groupId>
+                <artifactId>greys-server</artifactId>
+                <version>${greys-server.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.ompc.greys</groupId>
+                <artifactId>greys-core</artifactId>
+                <version>${greys-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.ompc.greys</groupId>
+                <artifactId>greys-protocol</artifactId>
+                <version>${greys-protocol.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <scope>test</scope>
+                <version>4.9</version>
+            </dependency>
+
             <dependency>
                 <groupId>net.sf.jopt-simple</groupId>
                 <artifactId>jopt-simple</artifactId>
@@ -124,20 +172,42 @@
                 <version>2.3.1</version>
             </dependency>
             <!--<dependency>-->
-                <!--<groupId>org.springframework</groupId>-->
-                <!--<artifactId>spring-context</artifactId>-->
-                <!--<version>4.0.2.RELEASE</version>-->
+            <!--<groupId>org.springframework</groupId>-->
+            <!--<artifactId>spring-context</artifactId>-->
+            <!--<version>4.0.2.RELEASE</version>-->
             <!--</dependency>-->
             <!--<dependency>-->
-                <!--<groupId>org.codehaus.groovy</groupId>-->
-                <!--<artifactId>groovy-all</artifactId>-->
-                <!--<version>2.4.3</version>-->
+            <!--<groupId>org.codehaus.groovy</groupId>-->
+            <!--<artifactId>groovy-all</artifactId>-->
+            <!--<version>2.4.3</version>-->
             <!--</dependency>-->
+
+            <!-- netty4 -->
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-all</artifactId>
+                <version>4.0.34.Final</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>5.2.2.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.el</groupId>
+                <artifactId>javax.el-api</artifactId>
+                <version>2.2.4</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
     <modules>
-        <module>core</module>
-        <module>agent</module>
+        <module>greys-core</module>
+        <module>greys-agent</module>
+        <module>greys-server</module>
+        <module>greys-common</module>
+        <module>greys-protocol</module>
     </modules>
 </project>
