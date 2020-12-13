@@ -41,7 +41,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
                 "ptrace -E .*\\.StringUtils isBlank org\\.apache\\.commons\\.(lang|lang3)\\..*",
                 "ptrace org.apache.commons.lang.StringUtils isBlank org.apache.commons.lang.*",
                 "ptrace *StringUtils isBlank org.apache.commons.lang.*",
-                "ptrace *StringUtils isBlank org.apache.commons.lang.* params[0].length==1"
+                "ptrace *StringUtils isBlank org.apache.commons.lang.* 'params[0].length==1'",
+                "ptrace *StringUtils isBlank org.apache.commons.lang.* '#cost>100'"
         })
 public class PathTraceCommand implements Command {
 
@@ -156,9 +157,10 @@ public class PathTraceCommand implements Command {
                     public AdviceListener getAdviceListener() {
                         return new ReflectAdviceListenerAdapter() {
 
+                            private final InvokeCost topInvokeCost = new InvokeCost();
                             private final InvokeCost invokeCost = new InvokeCost();
 
-                            private final ThreadLocal<PathTrace> pathTraceRef = new ThreadLocal<PathTrace>(){
+                            private final ThreadLocal<PathTrace> pathTraceRef = new ThreadLocal<PathTrace>() {
                                 @Override
                                 protected PathTrace initialValue() {
                                     return new PathTrace();
@@ -188,7 +190,7 @@ public class PathTraceCommand implements Command {
                             }
 
                             @Override
-                            public void before(Advice advice) throws Throwable {
+                            public void before(final Advice advice) throws Throwable {
 
                                 if (!isInit) {
                                     return;
@@ -208,9 +210,14 @@ public class PathTraceCommand implements Command {
                                 final Entity entity = pathTrace.getEntity(new InitCallback<Entity>() {
                                     @Override
                                     public Entity init() {
-                                        return new Entity(timeFragmentManager.generateProcessId());
+                                        return new Entity(advice, timeFragmentManager.generateProcessId());
                                     }
                                 });
+
+                                // top invoke
+                                if(entity.deep <= 0) {
+                                    topInvokeCost.begin();
+                                }
 
                                 entity.tTree.begin(advice.getClazz().getCanonicalName() + ":" + advice.getMethod().getName() + "()");
                                 entity.deep++;
@@ -244,7 +251,7 @@ public class PathTraceCommand implements Command {
                                             advice,
                                             new Date(),
                                             cost,
-                                            getStack()
+                                            getStack(getThreadInfo())
                                     );
                                     entity.tfTable.add(timeFragment);
                                     entity.tTree.set(entity.tTree.get() + "; index=" + timeFragment.id + ";");
@@ -254,9 +261,12 @@ public class PathTraceCommand implements Command {
 
                                 if (entity.deep <= 0) {
 
+                                    // top invoke cost
+                                    final long topCost = topInvokeCost.cost();
+
                                     // 是否有匹配到条件
                                     // 之所以在这里主要是需要照顾到上下文参数对齐
-                                    if (isInCondition(advice, cost)) {
+                                    if (isInCondition(advice, topCost)) {
                                         // 输出打印内容
                                         if (isTimeTunnel) {
                                             printer.println(entity.tTree.rendering() + entity.tfTable.rendering());
@@ -307,11 +317,21 @@ public class PathTraceCommand implements Command {
      */
     private class Entity {
 
-        private Entity(int processId) {
+        private Entity(final Advice advice, final int processId) {
             this.processId = processId;
             this.tfTable = new TTimeFragmentTable(true);
-            this.tTree = new TTree(true, "pTracing for : " + getThreadInfo() + "process=" + processId + ";");
+            this.tTree = new TTree(true, getTitle(advice, processId));
             this.deep = 0;
+        }
+
+        private String getTitle(final Advice advice, final int processId) {
+            final StringBuilder titleSB = new StringBuilder()
+                    .append("pTracing for : ").append(getThreadInfo())
+                    .append("process=").append(processId).append(";");
+            if (advice.isTraceSupport()) {
+                titleSB.append("traceId=").append(advice.getTraceId()).append(";");
+            }
+            return titleSB.toString();
         }
 
         TTimeFragmentTable tfTable;

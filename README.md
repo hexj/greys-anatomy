@@ -1,7 +1,7 @@
 ![LOGO icon](https://raw.githubusercontent.com/oldmanpushcart/images/master/greys/greys-logo-readme.png)
 
 >
-线上系统为何经常出错？数据库为何屡遭黑手？业务调用为何频频失败？连环异常堆栈案，究竟是那次调用所为？
+线上系统为何经常出错？数据库为何屡遭黑手？业务调用为何频频失败？连环异常堆栈案，究竟是哪次调用所为？
 数百台服务器意外雪崩背后又隐藏着什么？是软件的扭曲还是硬件的沦丧？
 走进科学带你了解Greys, Java线上问题诊断工具。
 
@@ -13,6 +13,7 @@
 * [常见问题](https://github.com/oldmanpushcart/greys-anatomy/wiki/FAQ)
 * [更新记事](https://github.com/oldmanpushcart/greys-anatomy/wiki/Chronicle)
 * [详细文档](https://github.com/oldmanpushcart/greys-anatomy/wiki/greys-pdf)
+* [English-README](https://github.com/oldmanpushcart/greys-anatomy/blob/master/Greys_en.md)
 
 # 程序安装
 
@@ -30,36 +31,11 @@
 
 ## 最新版本
 
-### **VERSION :** 1.7.5.6
+### **VERSION :** 1.7.6.6
 
-1. 修复`greys.sh`脚本无法正确区别本地指定网络接口加载和远程访问的区别
-
-   - 本地指定网络接口加载
-   
-     ```
-     ./greys.sh <PID>@[IP:PORT]
-     ```
-     
-     例子
-     
-     - `./greys.sh 8600`
-     - `./greys.sh 8600@127.0.0.1`
-     - `./greys.sh 8600@127.0.0.1:3658`
-     
-   - 远程访问
-   
-     ```
-     ./greys.sh [@]<IP>[:PORT]
-     ```
-     
-     例子
-     
-     - `./greys.sh @127.0.0.1:3658`
-     - `./greys.sh @127.0.0.1`
-     - `./greys.sh 127.0.0.1:3658`
-     - `./greys.sh 127.0.0.1`
-
-1. 优化性能
+1. 支持JDK9
+2. greys.sh脚本支持tar的解压缩模式（有些机器没有unzip），默认unzip
+3. 修复 #219 问题
 
 ### 版本号说明
 
